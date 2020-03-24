@@ -61,10 +61,8 @@ class LRUCache:
         if self.size == self.limit:
             #set a node for the least recently used data
             node = self.order.head
-            #Get the value of that node and set it
-            node_value = node.value
-            #Get the key from the value
-            key_for_dict = node_value[0]
+            #Get the key from the node value
+            key_for_dict = node.value[0]
             #delete the storage in the dictionary
             del self.storage[key_for_dict]
             #delete the head of the dll          
