@@ -1,3 +1,7 @@
+import sys
+sys.path.append('../doubly_linked_list')
+from doubly_linked_list import DoublyLinkedList
+
 class LRUCache:
     """
     Our LRUCache class keeps track of the max number of nodes it
@@ -7,7 +11,14 @@ class LRUCache:
     to every node stored in the cache.
     """
     def __init__(self, limit=10):
-        pass
+        #set up the has table
+        self.storage = dict()
+        #bring in the double link list
+        self.order = DoublyLinkedList()
+        #current size of the cache
+        self.size = 0
+        #get the limit from creation
+        self.limit = limit
 
     """
     Retrieves the value associated with the given key. Also
@@ -17,7 +28,14 @@ class LRUCache:
     key-value pair doesn't exist in the cache.
     """
     def get(self, key):
-        pass
+        #if the key exists
+        if key in self.storage:
+            #set the node equal that key in the dictionary
+            node = self.storage[key]
+            self.order.move_to_end(node)
+            return node.value[1]
+        else:
+            return None
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -30,4 +48,33 @@ class LRUCache:
     the newly-specified value.
     """
     def set(self, key, value):
-        pass
+        #If the key already exists
+        if key in self.storage:
+            #Set a node with the already existing data
+            node = self.storage[key]
+            #Change the value of the node
+            node.value = (key, value)
+            #Move the node to most recently used
+            self.order.move_to_end(node)
+            return
+        #If the cache is at its limit
+        if self.size == self.limit:
+            #set a node for the least recently used data
+            node = self.order.head
+            #Get the value of that node and set it
+            node_value = node.value
+            #Get the key from the value
+            key_for_dict = node_value[0]
+            #delete the storage in the dictionary
+            del self.storage[key_for_dict]
+            #delete the head of the dll          
+            self.order.remove_from_head()
+            #change the size of the cache to reflect the change       
+            self.size -= 1
+        
+        #Otherwise add to the tail the data and key
+        self.order.add_to_tail((key, value))
+        #Set the storage of the key
+        self.storage[key] = self.order.tail
+        #increase the cache size
+        self.size += 1
